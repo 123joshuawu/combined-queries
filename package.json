@@ -1,6 +1,7 @@
 {
   "name": "use-combined-queries",
   "version": "0.0.0",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.5.2",
