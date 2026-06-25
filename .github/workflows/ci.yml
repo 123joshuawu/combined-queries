@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # Run the full suite (behavioral + type-level) against each supported react-query major.
+  # The library reads results structurally and normalizes v4/v5 differences at runtime
+  # (see src/memberAccess.ts), so the *same* source must pass against both — and against the
+  # lowest and latest of each major, to catch within-major drift.
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        react-query:
+          - '4.0.0'
+          - '^4'
+          - '5.0.0'
+          - '^5'
+    name: react-query@${{ matrix.react-query }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Pin react-query for this leg
+        run: pnpm add -D @tanstack/react-query@${{ matrix.react-query }}
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
