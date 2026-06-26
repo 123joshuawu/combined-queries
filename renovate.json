@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":dependencyDashboard"
+  ],
+  "labels": ["dependencies"],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Keep the v4 cross-version alias pinned within react-query v4 (see src/crossVersion.test.tsx).",
+      "matchDepNames": ["rq4"],
+      "allowedVersions": "<5.0.0"
+    },
+    {
+      "description": "Keep the v5 cross-version alias pinned within react-query v5.",
+      "matchDepNames": ["rq5"],
+      "allowedVersions": ">=5.0.0 <6.0.0"
+    },
+    {
+      "description": "Group non-major devDependency updates into a single PR to reduce noise.",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "devDependencies (non-major)"
+    },
+    {
+      "description": "Node engine + .nvmrc track the supported floor deliberately; surface but don't auto-merge.",
+      "matchDepNames": ["node"],
+      "matchManagers": ["npm", "nvm"],
+      "enabled": true
+    }
+  ]
+}
