@@ -33,8 +33,6 @@ export interface RawLeafResult {
   isPending?: boolean;
   /** Present in both, but with different meaning (see file header). */
   isLoading?: boolean;
-  /** v4 only; the v4 equivalent of v5's `isLoading`. */
-  isInitialLoading?: boolean;
   refetch: () => Promise<unknown>;
 }
 
@@ -48,9 +46,17 @@ export function leafPending(leaf: RawLeafResult): boolean {
   return isV5(leaf) ? leaf.isPending! : leaf.status === "loading";
 }
 
-/** v5 `isLoading`: "no data yet *and* fetching". v4 source: `isInitialLoading`. */
+/**
+ * v5 `isLoading`: "no data yet *and* fetching".
+ *
+ * v4 has an `isInitialLoading` field that means exactly this, but it was only added in v4.8.0 —
+ * the floor of our peer range (and the CI floor pin, 4.0.5) predates it. So derive the meaning
+ * from primitives present across the whole v4 range: `status === 'loading' && isFetching`.
+ */
 export function leafLoading(leaf: RawLeafResult): boolean {
-  return isV5(leaf) ? leaf.isLoading! : leaf.isInitialLoading!;
+  return isV5(leaf)
+    ? leaf.isLoading!
+    : leaf.status === "loading" && leaf.isFetching;
 }
 
 /** v5 `status` vocabulary. v4 source: map `'loading'` → `'pending'`, else pass through. */

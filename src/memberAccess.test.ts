@@ -147,14 +147,14 @@ describe("memberAccess normalizers stay lazy (the tracked-property guard)", () =
     expect([...v4r.reads]).toEqual(["status"]);
   });
 
-  it("leafLoading reads only isLoading (v5) / only isInitialLoading (v4)", () => {
+  it("leafLoading reads only isLoading (v5) / only status + isFetching (v4)", () => {
     const v5r = recording(asLeaf(v5.pending));
     leafLoading(v5r.proxy);
     expect([...v5r.reads]).toEqual(["isLoading"]);
 
     const v4r = recording(asLeaf(v4.pending));
     leafLoading(v4r.proxy);
-    expect([...v4r.reads]).toEqual(["isInitialLoading"]);
+    expect([...v4r.reads]).toEqual(["status", "isFetching"]);
   });
 
   it("leafStatus reads only status", () => {
